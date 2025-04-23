@@ -1,0 +1,13 @@
+pm2 start servidor.js ------para iniciar el servidor en segundo plano
+pm2 list -------------lsitado de servidores levantados
+pm2 stop 0 --------------en lugar de 0 va el ID de el servidor
+
+pm2 delete 0 -------------para eliminar un servidor de la lista de ejecucion 
+pm2 restart 0 ------------para reiniciar el servidor
+
+pm2 logs -------------para ver los logs en tiempo real
+
+pm2 startup --------------al iniciarl el sistema (no lo e probado) se debe ejecutar un linea de comando despues de esta
+
+
+
