@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start servidor.js",
+    "start": "pm2 start src/servidor.js",
     "stop": "pm2 stop 0",
     "restart": "pm2 restart 0",
     "delserv": "pm2 delete 0"
@@ -16,6 +16,7 @@
     "express": "^5.1.0",
     "fs": "^0.0.1-security",
     "multer": "^1.4.5-lts.2",
+    "odbc": "^2.4.9",
     "pm2": "^6.0.5"
   }
 }

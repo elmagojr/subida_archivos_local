@@ -10,4 +10,11 @@ pm2 logs -------------para ver los logs en tiempo real
 pm2 startup --------------al iniciarl el sistema (no lo e probado) se debe ejecutar un linea de comando despues de esta
 
 
+en omnis
+Calculate %%HOST as 'localhost'
+Calculate %%PUERTO as 4040
+Calculate %%DIRECCION as con('http://',%%HOST,':',%%PUERTO)
+Launch program (Do not quit OMNIS) {"C:\SISC\gg.bat",[%%DIRECCION]}     ;; lanzar addon WEB
+
+
 
