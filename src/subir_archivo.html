@@ -7,22 +7,90 @@
     <title>Subida de Documentos</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+ 
 </head>
 <body class="bg-dark text-light vh-100 d-flex flex-column justify-content-center">
-    <div class="container-lg"><h2>Subida de Documentos</h2></div>
+<div  class="container-lg ">
+  <h4>Busqueda</h4>
+  
+    <div class="input-group mb-3">
+      <input class="form-control" type="text" id="coop" name="coop" >      
+      <button onclick="load_data(2)" class="btn btn-secondary" type="">Buscar</button>
+      <button  class="btn btn-secondary" type="submit">Todos</button>
+    </div>
+ 
+</div>
+<div  class="container-lg">
+
+  <h4>Informacion Afiliado</h4>
+  <!--   <form action="" method="" id="ficha_coop"> -->
+    <div class="row align-items-start">
+      <div class="mb-3 ">     
+        <label for="coop_nombre" class="form-label">Nombre</label>
+        <input disabled class="form-control" type="text" id="coop_nombre" name="coop_nombre" >   
+      </div>   
+    </div>
+   
+  <div class="row align-items-start">
+    <div class="  mb-3 col">
+      <span class=" -text info">Codigo Coop.</span>
+      <input disabled class="form-control" type="text" id="coop_codigo" name="coop_codigo" >   
+    </div>
+    <div class="  mb-3 col">
+      <span class=" -text info col">Identidad</span>
+      <input disabled class="form-control" type="text" id="coop_Identidad" name="coop_Identidad" >   
+    </div>
+    <div class="  mb-3 col">
+      <span class=" -text info">Genero</span>
+      <div class="form-control">
+        <span  id="coop_Genero" name="coop_Genero" class="badge bg-info">---</span>
+      </div>
+    </div>
+  </div>
+  <div class="row align-items-start">
+    <div class="  mb-3 col">
+      <span class=" -text info">Estado Civil</span>
+      <div class="form-control">
+        <span  id="coop_ec" name="coop_ec" class="badge bg-info">---</span>
+      </div>
+    </div>
+    <div class="  mb-3 col">
+      <span class=" -text info">Telefono</span>
+      <input disabled class="form-control" type="text" id="coop_Telefono" name="coop_Telefono" >   
+    </div>
+    <div class="  mb-3 col">
+      <span class=" -text info">E-Mail</span>
+      <input disabled class="form-control" type="text" id="coop_email" name="coop_email" >   
+    </div>
+  </div>
+
+     
+<!--     </form> -->
+  </div>
+
+    <div class="container-lg"><h4>Subida de Documentos</h4></div>
    
   <div class="container-lg" >
-    <form class="" action="/cargar" method="post" enctype="multipart/form-data">
-      <div class="input-group mb-3">
-        <input class="form-control" type="file" name="archivo" accept="application/pdf">
+    <form class="" action="" id="formulario" method="post" enctype="multipart/form-data">
+      <input  type="" id="temp_identidad" name="temp_identidad"  >
+      <input  type="" id="temp_nombre" name="temp_nombre"    >
+      <div class="input-group mb-3">       
+
+        <input class="form-control" type="file" id="archivo" name="archivo" accept="application/pdf">
         <button  class="btn btn-secondary" type="submit">Subir archivo</button>
       </div>
     </form>
   </div>
     
-   
-    
 
-      <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <script src="manejo_datos.js"></script>
+  <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded',()=>{
+      load_data(1);
+    })
+  </script>
+   
 </body>
 </html>

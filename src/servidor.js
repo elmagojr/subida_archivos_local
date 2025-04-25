@@ -11,33 +11,37 @@ const puerto = 4040;
 
 const fs = require('fs');
 const { json } = require("stream/consumers");
-const uploadDir = path.resolve('archivos_cargados');
+//const uploadDir = path.resolve('archivos_cargados');
 var DATA_COOP =[];
-
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-}
+const uploadDir = path.resolve('archivos_cargados');
 
 
-const storage = multer.diskStorage({
+//const subidaArchivo = multer().any();
+
+/* const storage = multer.diskStorage({
     destination: (req, file, cb)=>{
+        const identidad = req.body.temp_identidad;
+        console.log(req.body);
+        
+        
         cb(null, uploadDir);
     },
     filename: (req, file, cb)=>{
         const nombre = Date.now()+'-'+file.originalname
         cb(null, nombre)
     }
-})
+}) */
 
-const subidaArchivo = multer({
+/*  subidaArchivo = multer({
     storage:storage,
     limits: {
         fileSize: 5 * 1024 * 1024 // 5 megas
       }
-});
-console.log(path.resolve('JS'));
+}); */
+console.log('path:  '+path.resolve('js'));
 //app.use(express.static(path.resolve('subir_archivo.html')));
 app.use(express.static(path.resolve('JS')));
+
 app.get('/test-connection', async (req, res) => {
     try {
         const connection = await ODBC.connect(connectionString);
@@ -49,14 +53,13 @@ app.get('/test-connection', async (req, res) => {
     }
 });
 
-/* 
-app.get('/', async (req, res) => {
+ 
+app.get('/api/coop', async (req, res) => {
     const id = req.query.id;
-    console.log('parametro: '+req.query.id);
-    
+    console.log('parametro: '+req.query.id);    
 
     if (!id) {
-        return res.status(400).send('Falta el parámetro "id"');
+        return res.status(400).send('Falta el parámetro para codigo coop');
     }
 
     try {
@@ -68,45 +71,28 @@ app.get('/', async (req, res) => {
         console.error('Error de consulta:', error);
         res.status(500).send('Error al consultar la base de datos');
     }
-}); */
+}); 
 
 
- app.get('/', async (req, res)=>{
-    const id = req.query.id;
-    if (!id) {
-        //alert("No ingresaste un nombre.");
-        //return res.status(400).send('Falta el parámetro "id"');
-    }
-    else
-    {
-        try {
-            const connection = await ODBC.connect(connectionString);
-            const result = await connection.query(`SELECT * FROM DBA.COOPERATIVISTAS where coop_codigo = ?`, [id]);
-            await connection.close();
-            //DATA_COOP=  res.json(result);
-            DATA_COOP = res.json(result);
-            console.log(DATA_COOP);
-            
-        } catch (error) {
-            console.error('Error de consulta:', error);
-            res.status(500).send('Error al consultar la base de datos');
-        }
-    }
+ app.get('/', async (req, res)=>{  
 
-
-    console.log(path.resolve('subir_archivo.html'));    
-     res.sendFile(path.resolve('subir_archivo.html'))
+    //console.log(path.resolve('subir_archivo.html'));    
+    res.sendFile(path.resolve('subir_archivo.html'))
  })
+ const upload = multer({ dest: 'temp/' });
+ //const subidaTemporal = multer().none();
+app.post('/cargar', upload.single('archivo'), (req, res)=>{   
+    const identidad = req.body.temp_identidad;
+    const nombre = req.body.temp_nombre;
 
-app.post('/cargar', subidaArchivo.single('archivo'), (req, res)=>{
-    if (!req.file) {
-        return res.status(400).send('No se pudo subir el archivo');
-    }
-    res.send('Archivo subido con éxito.');
+    console.log('Identidad:', identidad);
+    console.log('Nombre:', nombre);
+
+    res.send(`Recibido identidad: ${identidad}, nombre: ${nombre}`);
 
 });
 
 app.listen(puerto, '0.0.0.0', ()=>{
     console.log(`Servidor activo en http://localhost:${puerto}`);
-    console.log(uploadDir); 
+
 })
