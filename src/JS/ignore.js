@@ -11,8 +11,6 @@ app.post('/cargar',  (req, res)=>{
             if (!fs.existsSync(usr_dir)) {
                 fs.mkdirSync(usr_dir, { recursive: true });
             }
-
-            
             cb(null, usr_dir);
         },
         filename: (req, file, cb)=>{
@@ -43,3 +41,62 @@ app.post('/cargar',  (req, res)=>{
     });
 
 });
+
+
+
+
+
+
+/* 
+******************************************************************** */
+
+document.addEventListener('DOMContentLoaded',()=>{
+    const FORMULARIO = document.getElementById('formulario_NOEXISTE');
+    FORMULARIO.addEventListener('submit', async (event)=>{
+       event.preventDefault();
+       const archivo = document.getElementById('archivo').files[0];
+       const identidad = document.getElementById('temp_identidad').value;
+       const nombre = document.getElementById('temp_nombre').value;
+       
+      // const archivo = document.getElementById('archivo').files[0];
+   
+       if (!archivo) {
+           alerta("No se ha escogido un archivo. Seleccion uno");
+           return;
+       }
+   
+   /*     const fromdata = new FormData();
+       fromdata.append('archivo', archivo);
+       fromdata.append('temp_identidad', identidad);
+       fromdata.append('temp_nombre', nombre);
+       try {
+   
+           for (const pair of fromdata.entries()) {
+               console.log(`${pair[0]}: ${pair[1]}`);
+           }
+           
+           const resp = await fetch('/cargar', {
+               method:'POST',
+               body:fromdata
+           });
+           const MENSAJE = await resp.text();
+           alerta(MENSAJE);
+           FORMULARIO.reset();
+       } catch (error) {
+           console.error('Error al subir el documento'. error);
+           alerta('Error al subir archivo')
+       } */
+    })
+   })
+
+
+   destination: (req, file, cb) => {
+    const nombrEDirectorio = req.query.nombre; // 🔥
+    const uploadpath = path.join(dir_principal, nombrEDirectorio);
+
+    if (!fs.existsSync(uploadpath)) {
+        return cb(new Error("El directorio no existe"));
+    }
+
+    cb(null, uploadpath);
+}

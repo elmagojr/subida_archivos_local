@@ -16,7 +16,7 @@
     <div class="input-group mb-3">
       <input class="form-control" type="text" id="coop" name="coop" >      
       <button onclick="load_data(2)" class="btn btn-secondary" type="">Buscar</button>
-      <button  class="btn btn-secondary" type="submit">Todos</button>
+      <button  class="btn btn-secondary" onclick="carga_archivos('0319196400028')" type="submit">Todos</button>
     </div>
  
 </div>
@@ -69,19 +69,39 @@
   </div>
 
     <div class="container-lg"><h4>Subida de Documentos</h4></div>
-   
+    <input  type="" id="temp_identidad" name="temp_identidad" hidden >
+    <input  type="" id="temp_nombre" name="temp_nombre" hidden   >
   <div class="container-lg" >
-    <form class="" action="" id="formulario" method="post" enctype="multipart/form-data">
-      <input  type="" id="temp_identidad" name="temp_identidad"  >
-      <input  type="" id="temp_nombre" name="temp_nombre"    >
+    <form class="" action="" id="formulario" method="" enctype="multipart/form-data">    
       <div class="input-group mb-3">       
 
         <input class="form-control" type="file" id="archivo" name="archivo" accept="application/pdf">
-        <button  class="btn btn-secondary" type="submit">Subir archivo</button>
+        <button onclick="crearYSubir()"  class="btn btn-secondary" type="">Subir archivo</button>
       </div>
     </form>
   </div>
     
+<div
+  class="container"
+>
+<button  class="btn btn-secondary" onclick="carga_archivos()" type="submit">Enlistar Archivos</button>
+<div class="table-responsive"></div>
+<table id="tbl_archivos" name="tbl_archivos" class="table table-success table-striped">
+  <thead>
+    <tr>
+
+      <th scope="col">Nombre del archivo</th>
+      <th scope="col">Peso</th>
+      <th scope="col">Fecha</th>
+    </tr>
+  </thead>
+  <tbody>
+ 
+  
+  </tbody>
+</table>
+</div>
+</div>
 
 
   <script src="manejo_datos.js"></script>
