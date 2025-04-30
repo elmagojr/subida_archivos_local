@@ -5,12 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subida de Documentos</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
  
 </head>
-<body class="bg-dark text-light vh-100 d-flex flex-column justify-content-center">
+<body class="bg-dark text-light vh-100 d-flex flex-column ">
 <div  class="container-lg ">
+
+  <div id="pantallaCargando" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255, 255, 255, 0.096); z-index:9999; justify-content:center; align-items:center;">
+    <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;"></div>
+  </div>
   <h4>Busqueda</h4>
   
     <div class="input-group mb-3">
@@ -76,31 +80,38 @@
       <div class="input-group mb-3">       
 
         <input class="form-control" type="file" id="archivo" name="archivo" accept="application/pdf">
-        <button onclick="crearYSubir()"  class="btn btn-secondary" type="">Subir archivo</button>
+        <button hidden onclick="crearYSubir()" id="btn_subir" class="btn btn-secondary" type="" disabled="true">Subir archivo</button>
+
+        <button onclick="crearYSubir()" id="btnSubir" class="btn btn-primary" type="button">
+          <span class="spinner-border spinner-border-sm d-none" id="spinner" aria-hidden="true"></span>
+          <span id="textoBtn">Subir archivo</span>
+        </button>
       </div>
     </form>
   </div>
     
-<div
-  class="container"
->
-<button  class="btn btn-secondary" onclick="carga_archivos()" type="submit">Enlistar Archivos</button>
-<div class="table-responsive"></div>
-<table id="tbl_archivos" name="tbl_archivos" class="table table-success table-striped">
-  <thead>
-    <tr>
-
-      <th scope="col">Nombre del archivo</th>
-      <th scope="col">Peso</th>
-      <th scope="col">Fecha</th>
-    </tr>
-  </thead>
-  <tbody>
- 
+<div class="container">
+ <div class="py-2">
+  <button  class="btn btn-primary " onclick="carga_archivos()" type="submit">Enlistar Archivos</button>
+ </div>
+  <div class="table-responsive">
+    <table id="tbl_archivos" name="tbl_archivos" class="table table-sm  table-hover table-active text-secondary-emphasis table-bordered border-primary">
+      <thead class="table-info" >
+        <tr>
+          <th scope="col">Nombre del archivo</th>
+          <th scope="col">Peso</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+    
+      
+      </tbody>
+    </table>
+  </div>
   
-  </tbody>
-</table>
-</div>
+  </div>
 </div>
 
 

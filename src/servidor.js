@@ -11,11 +11,13 @@ app.use(express.json());
 //const connectionString = 'DSN=SISC';
 const connectionString = 'Driver=SQL Anywhere 12;UID=HID;PWD=DE44EAE255516A0E0AD4901D8691A0F2850548FFC8AFD519AA84833E45F6018A;DBN=SISC_EDNE;ENG=SISC_EDNE;';
 
-const puerto = 4040;
+const puerto = 3000;
 
-var DATA_COOP = [];
-const uploadDir = path.resolve('archivos_cargados');
-
+function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
 
 
 console.log('path:  ' + path.resolve('js'));
@@ -102,14 +104,33 @@ const storage = multer.diskStorage({
         cb(null,nombreFinal)
     }
 })
-const upload =  multer({storage});
+const upload =  multer({
+    storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5 megas
+      }
+});
 
-app.post('/subir_archivo', upload.single('archivo'), (req,res)=>{
-    if (!req.file) {
-        return res.status(400).json({mensaje:"No se recibio archivo alguno"})
-    }   
-    res.json({mensaje:"Archivo cargado con exito ;p;p"})
+app.post('/subir_archivo',  (req,res)=>{
+    upload.single('archivo')(req,res, function(err){         
+
+        if (err) {
+            if (err.code==='LIMIT_FILE_SIZE') {
+                return res.status(400).json({mensaje:"El archivo exede el tamaño permitido [5MB]"})
+            }
+            return res.status(500).json({ mensaje: 'Error al subir archivo', error: err.message });
+        }
+        if (!req.file) {
+            return res.status(400).json({mensaje:"No se recibio archivo alguno"})
+        }
+         
+        res.json({mensaje:"Archivo cargado con exito "})
+    })
+   
 })
+
+const uploadDir = path.resolve('archivos_cargados');
+app.use('/pdf', express.static(uploadDir));
 
 app.get('/api/lista_archivos/:carpeta',(rep, res)=>{
     const carpeta = rep.params.carpeta;
@@ -129,13 +150,33 @@ app.get('/api/lista_archivos/:carpeta',(rep, res)=>{
             const stats = fs.statSync(filePath);
             return {
                 nombre: nombreArchivo,
-                size: stats.size,
+                size: formatBytes(stats.size),
                 fecha: stats.mtime
             };
         });
         res.json(detalle_Archivos)
     });   
 
+});
+
+app.delete('/api/eliminar_archivo/:carpeta/:archivo', (req, res) => {
+    const carpeta = req.params.carpeta;
+    const archivo = req.params.archivo;
+
+    const ruta = path.join(dir_principal, carpeta, archivo);
+
+    if (!fs.existsSync(ruta)) {
+        return res.status(404).json({ mensaje: "el archivo no se encuentra" });
+    }
+
+    fs.unlink(ruta, (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ mensaje: "Error del servidor [no se elimino el archivo]" });
+        }
+
+        res.json({ mensaje: "Archivo removido" });
+    });
 });
 
 app.listen(puerto, '0.0.0.0', () => {
