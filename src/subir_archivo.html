@@ -85,7 +85,18 @@
         <button onclick="crearYSubir()" id="btnSubir" class="btn btn-primary" type="button">
           <span class="spinner-border spinner-border-sm d-none" id="spinner" aria-hidden="true"></span>
           <span id="textoBtn">Subir archivo</span>
-        </button>
+        </button>      
+      </div>
+      <div class="input-group mb-3">
+        <select id="Stipo" name="Stipo" class="form-select" aria-label="Default select example">
+          <option selected>Seleccione un tipo de documento</option>
+          <option value="1">Identidad</option>
+          <option value="2">Pasaporte</option>
+          <option value="3">Contratos</option>
+          <option value="4">Escrituras</option>
+          <option value="5">Croquis</option>
+          <option value="6">Otros ducumentos</option>
+        </select>
       </div>
     </form>
   </div>
@@ -94,7 +105,7 @@
  <div class="py-2">
   <button  class="btn btn-primary " onclick="carga_archivos()" type="submit">Enlistar Archivos</button>
  </div>
-  <div class="table-responsive">
+  <div class="table-responsive" hidden>
     <table id="tbl_archivos" name="tbl_archivos" class="table table-sm  table-hover table-active text-secondary-emphasis table-bordered border-primary">
       <thead class="table-info" >
         <tr>
@@ -111,6 +122,24 @@
     </table>
   </div>
   
+
+  <div class="accordion" id="acordion_archivos">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+          Accordion Item #1
+        </button>
+      </h2>
+      <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+        <div class="accordion-body">
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
   </div>
 </div>
 

@@ -112,7 +112,8 @@ async function crearYSubir() {
     const formulario = document.getElementById('formulario');
     const archivo = document.getElementById('archivo').files[0];
     const identidad = document.getElementById('temp_identidad').value;
-    const nombre = document.getElementById('temp_nombre').value;   
+    const nombre = document.getElementById('temp_nombre').value;  
+    const tipoDoc = document.getElementById('Stipo').value; 
     const SIZE_MAX =5;
     mostrarCargando(true)
     //btn_load(true);
@@ -134,20 +135,21 @@ async function crearYSubir() {
     fromdata.append('archivo', archivo);
     fromdata.append('identidad', identidad);
     fromdata.append('nombre', nombre);
+    fromdata.append('tipo', tipoDoc)
   //para crear el directorio
     const resp = await fetch('/directorio_cargar', {
         method:'POST',
         headers:{
             'Content-Type':'application/json'
         },
-        body:JSON.stringify({identidad})
+        body:JSON.stringify({identidad, tipoDoc})
     });
     const dataArchivo = await resp.json();
     if (!resp.ok) {
         alerta("[1]Error al subir archivo: "+ dataArchivo.mensaje);
     } else {
         //creacion subida del archivo
-        const res_Archivo = await fetch(`/subir_archivo?identidad=${identidad}&nombre=${nombre}`,{
+        const res_Archivo = await fetch(`/subir_archivo?identidad=${identidad}&nombre=${nombre}&tipo=${tipoDoc}`,{
             method:'POST',
             body:fromdata
         })
@@ -174,11 +176,13 @@ async function carga_archivos() {
   
     if (!respuesta.ok) {
         alerta("No tiene archivos subidos")
+        mostrarCargando(false);
         //btn_subir.disabled =true;
     } 
     const datos = await respuesta.json();
     if (datos.length===0) {
         alerta("Se obtuvo respuesta, pero no hay datos que mostrar")
+        mostrarCargando(false);
         //btn_subir.disabled =true;
     } 
     

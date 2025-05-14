@@ -8,8 +8,8 @@ const { error } = require("console");
 
 const app = express();
 app.use(express.json());
-//const connectionString = 'DSN=SISC';
-const connectionString = 'Driver=SQL Anywhere 12;UID=HID;PWD=DE44EAE255516A0E0AD4901D8691A0F2850548FFC8AFD519AA84833E45F6018A;DBN=SISC_EDNE;ENG=SISC_EDNE;';
+const connectionString = 'DSN=SISC';
+//const connectionString = 'Driver=SQL Anywhere 12;UID=HID;PWD=DE44EAE255516A0E0AD4901D8691A0F2850548FFC8AFD519AA84833E45F6018A;DBN=SISC_EDNE;ENG=SISC_EDNE;';
 
 const puerto = 3000;
 
@@ -64,11 +64,7 @@ app.get('/', async (req, res) => {
 //const subidaTemporal = multer().none();
 const dir_principal = path.join(__dirname, "archivos_cargados");
 app.post('/directorio_cargar', (req, res) => {
-    const {identidad} = req.body;
-
-
-  
-    const sub_carpeta = path.join(__dirname, identidad); //carperta con el nuemro de identidad 
+    const {identidad, tipoDoc} = req.body;
 
     try {
         if (!fs.existsSync(dir_principal)) {
@@ -80,6 +76,11 @@ app.post('/directorio_cargar', (req, res) => {
         if (!fs.existsSync(sub)) {   
             fs.mkdirSync(sub);
         }
+        const subTipo = path.join(sub, tipoDoc);
+        if (!fs.existsSync(subTipo)) {   
+            fs.mkdirSync(subTipo);
+        }
+
       return  res.json({mensaje:'Archivo subido con exito'})
     } catch (error) {
         return  res.status(400).json({mensaje:'No se pudo crear directorio'});        
@@ -92,7 +93,8 @@ const storage = multer.diskStorage({
     destination:(req,file,cb)=>{
         const nombrEDirectorio = req.query.identidad;
         const nombrePersona = req.query.nombre;
-        const uploadpath = path.join(dir_principal,nombrEDirectorio);
+        const tipo = req.query.tipo;
+        const uploadpath = path.join(dir_principal,nombrEDirectorio,tipo);
         if (!fs.existsSync(uploadpath)) {
             return cb(new Error("El directorio no existe"))
         } 
@@ -139,12 +141,43 @@ app.get('/api/lista_archivos/:carpeta',(rep, res)=>{
         return res.status(400).json({mensaje:"no se encuentra ese directorio"});
     }
 
+    const resultado =[];
+
+    const subcarpetas = fs.readdirSync(direccion).filter(nombre => {
+        const subPath = path.join(direccion, nombre);
+        return fs.statSync(subPath).isDirectory();
+    });
+
+    subcarpetas.forEach(subcarpeta => {
+        const SubDir = path.join(direccion, subcarpeta);
+        const DirArchivo = fs.readdirSync(SubDir).filter(nombre=>{
+            const PFile = path.join(SubDir, nombre);
+            return fs.statSync(PFile).isFile();
+        }).map(Archivos =>{
+            const filepath = path.join(SubDir, Archivos);
+            const stats = fs.statSync(filepath);
+            return {
+                nombre:Archivos,
+                size:formatBytes(stats.size),
+                fecha:stats.mtime
+            };
+        });
+
+        resultado.push({
+            subcarpeta,
+            DirArchivo
+        });
+
+        res.json(resultado);
+    });
+
+/*
     fs.readdir(direccion, (err, archivos)=>{
         if(err){
             console.log(err);
             return res.status(500).json({mensaje:"no se leyó el directorio"});
         }
-
+                                    
         const detalle_Archivos = archivos.map(nombreArchivo=>{
             const filePath = path.join(direccion, nombreArchivo);
             const stats = fs.statSync(filePath);
@@ -154,9 +187,9 @@ app.get('/api/lista_archivos/:carpeta',(rep, res)=>{
                 fecha: stats.mtime
             };
         });
-        res.json(detalle_Archivos)
+        res.json(subcarpetas)
     });   
-
+*/
 });
 
 app.delete('/api/eliminar_archivo/:carpeta/:archivo', (req, res) => {

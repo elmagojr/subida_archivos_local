@@ -100,3 +100,23 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     cb(null, uploadpath);
 }
+
+
+
+
+app.post('/subir_archivo', (req, res) => {
+    upload.single('archivo')(req, res, function (err) {
+        if (err) {
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({ mensaje: 'El archivo excede el tamaño permitido (5 MB)' });
+            }
+            return res.status(500).json({ mensaje: 'Error al subir archivo', error: err.message });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({ mensaje: 'No se recibió archivo alguno' });
+        }
+
+        res.json({ mensaje: 'Archivo cargado con éxito 😉' });
+    });
+});

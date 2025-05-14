@@ -17,4 +17,5 @@ Calculate %%DIRECCION as con('http://',%%HOST,':',%%PUERTO)
 Launch program (Do not quit OMNIS) {"C:\SISC\gg.bat",[%%DIRECCION]}     ;; lanzar addon WEB
 
 
-
+para levantar app por tunnel
+ngrok http --url=toucan-powerful-incredibly.ngrok-free.app 3000
