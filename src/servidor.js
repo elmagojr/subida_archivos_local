@@ -4,7 +4,7 @@ const multer = require("multer");
 const fs = require('fs');
 const path = require('path')
 const ODBC = require("odbc");
-const { error } = require("console");
+
 
 const app = express();
 app.use(express.json());
@@ -54,6 +54,18 @@ app.get('/api/coop', async (req, res) => {
     }
 });
 
+app.get('/api/allcoop', async (req, res) => {
+    
+    try {
+        const connection = await ODBC.connect(connectionString);
+        const result = await connection.query(`SELECT coop_codigo,coop_identidad,coop_nombre,coop_rtn,coop_codigo_ant FROM "DBA"."COOPERATIVISTAS" where "COOP_COMPANIA" = (select usu_compania from dba."Usuarios" where usu_codigo = current user)`);
+        await connection.close();
+        res.json(result);
+    } catch (error) {
+        console.error('Error de consulta:', error);
+        res.status(500).send('Error al consultar la base de datos');
+    }
+});
 
 app.get('/', async (req, res) => {
 
@@ -67,6 +79,11 @@ app.post('/directorio_cargar', (req, res) => {
     const {identidad, tipoDoc} = req.body;
 
     try {
+        if (!identidad||tipoDoc==0) {
+            
+            throw new Error("El formulario no se ha completado, favor revisar");
+            
+        }
         if (!fs.existsSync(dir_principal)) {
             fs.mkdirSync(dir_principal);       
             console.log("directorio1: "+dir_principal); 
@@ -168,9 +185,10 @@ app.get('/api/lista_archivos/:carpeta',(rep, res)=>{
             DirArchivo
         });
 
-        res.json(resultado);
+        
     });
 
+        res.json(resultado);
 /*
     fs.readdir(direccion, (err, archivos)=>{
         if(err){
@@ -192,11 +210,12 @@ app.get('/api/lista_archivos/:carpeta',(rep, res)=>{
 */
 });
 
-app.delete('/api/eliminar_archivo/:carpeta/:archivo', (req, res) => {
+app.delete('/api/eliminar_archivo/:carpeta/:tipo/:archivo', (req, res) => {
     const carpeta = req.params.carpeta;
     const archivo = req.params.archivo;
+    const tipo = req.params.tipo;
 
-    const ruta = path.join(dir_principal, carpeta, archivo);
+    const ruta = path.join(dir_principal, carpeta, tipo, archivo);
 
     if (!fs.existsSync(ruta)) {
         return res.status(404).json({ mensaje: "el archivo no se encuentra" });

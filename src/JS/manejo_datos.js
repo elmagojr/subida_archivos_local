@@ -59,6 +59,40 @@ function mostrarCargando(mostrar) {
     }
   
   }
+ 
+async function TraeTodosLosAfiliados() {   
+    mostrarCargando(true);
+    const tabla_afiliados = document.getElementById('tbl_afiliado').querySelector('tbody');
+    const respuesta = await fetch(`/api/allcoop`);
+
+    if (!respuesta.ok) {
+        alerta("No se encuentran afilaidos")
+        mostrarCargando(false);
+    } 
+    const datos = await respuesta.json();
+    if (datos.length===0) {
+        alerta("Se obtuvo respuesta, pero no hay datos que mostrar")
+        mostrarCargando(false);     
+    } 
+    tabla_afiliados.innerHTML = datos.length ? datos.map(D=>`
+                <tr>
+                    <td>
+                        <a target="_blank" class="btn btn-primary btn-sm" href="/?id=${D.coop_codigo} " role=""><i class="ri-check-line"></i></a>
+                    </td>
+                 
+                    <td>${D.coop_codigo}</td>
+                    <td>${D.coop_identidad}</td>
+                    <td>${D.coop_nombre}</td>
+                    <td>${D.coop_rtn}</td>
+                    <td>${D.coop_codigo_ant}</td>                 
+                </tr> 
+        
+        `).join(''):'<tr><td>No hay datos</td></tr>'
+   mostrarCargando(false);
+//datos.map(D=>
+}
+
+
 function btn_load(load) {
     if (load) {
         btn.disabled = load;
@@ -123,6 +157,17 @@ async function crearYSubir() {
         mostrarCargando(false)
         return;
     } else {
+        if (tipoDoc==0) {
+            alerta("Seleccione un tipo de documento");
+            mostrarCargando(false)
+            return;
+        }
+        if (!identidad) {
+            alerta("Busque una persona valida a quién le pertenezca este documento");
+            mostrarCargando(false)
+            return;
+        }
+
         const fileSize = archivo.size;
         if (fileSize >SIZE_MAX * 1024 * 1024) {
             alerta("Archivo excede el tamaño minimo [5MB]")
@@ -173,7 +218,7 @@ async function carga_archivos() {
     const btn_subir = document.getElementById('btn_subir');
     mostrarCargando(true);
     const respuesta = await fetch(`/api/lista_archivos/${identidad}`);
-  
+
     if (!respuesta.ok) {
         alerta("No tiene archivos subidos")
         mostrarCargando(false);
@@ -186,33 +231,84 @@ async function carga_archivos() {
         //btn_subir.disabled =true;
     } 
     
-    const tbody = document.getElementById('tbl_archivos').querySelector('tbody');
+    //const tbody = document.getElementById('tbl_archivos').querySelector('tbody');
 
-    tbody.innerHTML = datos.length
-    ? datos.map(a=>`
-        <tr>
-            <td>${a.nombre}</td>
-            <td>${a.size}</td>
-            <td>${new Date(a.fecha).toLocaleDateString() }</td>
-            <td>
-            <a target="_blank" class="btn btn-primary" href="/pdf/${identidad}/${a.nombre}" role="button">Ver</a>
-             <button class="btn btn-danger btn-sm" onclick="eliminarArchivo('${identidad}', '${encodeURIComponent(a.nombre)}')">Eliminar</button>
-            </td>
-        </tr>    
-        `).join('')
-        : '<tr><td>No hay datos</td></tr>'
+    
+
+const acordion = document.getElementById('acordion_archivos');
+
+
+
+acordion.innerHTML = datos.length ? 
+
+datos.map(D=>`
+     <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapse${D.subcarpeta}" aria-expanded="false" aria-controls="collapse${D.subcarpeta}">
+            <div class="pr-2"><span id="" class="badge bg-secondary pr-2">${D.DirArchivo.length}  </span></div>
+            <b>${Obtener_tipoArchivo(D.subcarpeta)}</b>             
+          </button>
+        </h2>
+        <div id="collapse${D.subcarpeta}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+          <div class="accordion-body">
+                <div class="table-responsive" >
+                    <table id="tbl_archivos" name="tbl_archivos"
+                        class="table table-sm  table-hover table-active text-secondary-emphasis table-bordered border-primary">
+                        <thead class="table-info">
+                        <tr>
+                            <th scope="col">Nombre del archivo</th>
+                            <th scope="col">Peso</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Acción</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                         ${
+                     D.DirArchivo.map(a=>`        
+                <tr>
+                    <td>${a.nombre}</td>
+                    <td>${a.size}</td>
+                    <td>${new Date(a.fecha).toLocaleDateString() }</td>
+                    <td>
+                    <div class="">
+                        <a target="_blank" class="btn btn-primary btn-sm" href="/pdf/${identidad}/${D.subcarpeta}/${a.nombre}" role=""><i class="ri-eye-fill"></i></i></a>
+                        <a class="btn btn-danger btn-sm" onclick="eliminarArchivo('${identidad}',${D.subcarpeta}, '${encodeURIComponent(a.nombre)}')"><i class="ri-delete-bin-line"></i></a>
+                    </div>
+
+                    </td>
+                </tr>    
+                `).join('')        
+                         }
+                        </tbody>
+                    </table>
+                </div>
+          </div>
+        </div>
+      </div>
+
+    `).join('')
+
+: '<tr><td>No hay datos</td></tr>'
+
+
+
   document.getElementById('tbl_archivos').style.display='table';
+
   //btn_subir.disabled =false;
   mostrarCargando(false);
 }
 
 
-async function eliminarArchivo(identidad, nombreArchivo) {
+async function eliminarArchivo(identidad,tipo, nombreArchivo) {
     mostrarCargando(true); 
     const confirmar = confirm(`¿Está seguro que desea eliminar el archivo "${decodeURIComponent(nombreArchivo)}"?`);
-    if (!confirmar) return;
+    if (!confirmar) {
+        mostrarCargando(false); 
+        return;
+    }    
 
-    const respuesta = await fetch(`/api/eliminar_archivo/${identidad}/${nombreArchivo}`, {
+    const respuesta = await fetch(`/api/eliminar_archivo/${identidad}/${tipo}/${nombreArchivo}`, {
         method: 'DELETE'
     });
 

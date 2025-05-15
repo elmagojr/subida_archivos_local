@@ -1,156 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
-<head >
-  
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subida de Documentos</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
- 
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subida de Documentos</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+  <link href="/bootstrap/css/fonts/remixicon.css" rel="stylesheet">
+
 </head>
+
 <body class="bg-dark text-light vh-100 d-flex flex-column ">
-<div  class="container-lg ">
+  <div class="container-lg ">
 
-  <div id="pantallaCargando" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255, 255, 255, 0.096); z-index:9999; justify-content:center; align-items:center;">
-    <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;"></div>
-  </div>
-  <h4>Busqueda</h4>
-  
-    <div class="input-group mb-3">
-      <input class="form-control" type="text" id="coop" name="coop" >      
-      <button onclick="load_data(2)" class="btn btn-secondary" type="">Buscar</button>
-      <button  class="btn btn-secondary" onclick="carga_archivos('0319196400028')" type="submit">Todos</button>
+    <div id="pantallaCargando"
+      style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255, 255, 255, 0.096); z-index:9999; justify-content:center; align-items:center;">
+      <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;"></div>
     </div>
- 
+
+
+
+
+<!-- Modal busqueda afilaidos-->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Busqueda todos los afiliados</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="">
+            <div class="table-responsive">
+              <table id="tbl_afiliado" name="tbl_afiliado"
+                class="table table-sm  table-hover table-active text-secondary-emphasis table-bordered border-primary">
+                <thead class="table-info">
+                  <tr>
+                    <th scope="col">Acción</th>
+                    <th scope="col">Codigo. Coop</th>
+                    <th scope="col">Identidad</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">RTN</th>
+                    <th scope="col">Codigo Anterior</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" hidden>Understood</button>
+      </div>
+    </div>
+  </div>
 </div>
-<div  class="container-lg">
 
-  <h4>Informacion Afiliado</h4>
-  <!--   <form action="" method="" id="ficha_coop"> -->
+
+
+
+    <h4>Busqueda</h4>
+
+    <div class="input-group mb-3">
+      <input class="form-control" type="text" id="coop" name="coop">
+      <button onclick="load_data(2)" class="btn btn-secondary" type="">Buscar</button>
+      <button onclick="TraeTodosLosAfiliados()" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >Todos</button>
+    </div>
+
+  </div>
+  <div class="container-lg">
+
+    <h4>Informacion Afiliado</h4>
+    <!--   <form action="" method="" id="ficha_coop"> -->
     <div class="row align-items-start">
-      <div class="mb-3 ">     
+      <div class="mb-3 ">
         <label for="coop_nombre" class="form-label">Nombre</label>
-        <input disabled class="form-control" type="text" id="coop_nombre" name="coop_nombre" >   
-      </div>   
-    </div>
-   
-  <div class="row align-items-start">
-    <div class="  mb-3 col">
-      <span class=" -text info">Codigo Coop.</span>
-      <input disabled class="form-control" type="text" id="coop_codigo" name="coop_codigo" >   
-    </div>
-    <div class="  mb-3 col">
-      <span class=" -text info col">Identidad</span>
-      <input disabled class="form-control" type="text" id="coop_Identidad" name="coop_Identidad" >   
-    </div>
-    <div class="  mb-3 col">
-      <span class=" -text info">Genero</span>
-      <div class="form-control">
-        <span  id="coop_Genero" name="coop_Genero" class="badge bg-info">---</span>
+        <input disabled class="form-control" type="text" id="coop_nombre" name="coop_nombre">
       </div>
     </div>
-  </div>
-  <div class="row align-items-start">
-    <div class="  mb-3 col">
-      <span class=" -text info">Estado Civil</span>
-      <div class="form-control">
-        <span  id="coop_ec" name="coop_ec" class="badge bg-info">---</span>
+
+    <div class="row align-items-start">
+      <div class="  mb-3 col">
+        <span class=" -text info">Codigo Coop.</span>
+        <input disabled class="form-control" type="text" id="coop_codigo" name="coop_codigo">
+      </div>
+      <div class="  mb-3 col">
+        <span class=" -text info col">Identidad</span>
+        <input disabled class="form-control" type="text" id="coop_Identidad" name="coop_Identidad">
+      </div>
+      <div class="  mb-3 col">
+        <span class=" -text info">Genero</span>
+        <div class="form-control">
+          <span id="coop_Genero" name="coop_Genero" class="badge bg-info">---</span>
+        </div>
       </div>
     </div>
-    <div class="  mb-3 col">
-      <span class=" -text info">Telefono</span>
-      <input disabled class="form-control" type="text" id="coop_Telefono" name="coop_Telefono" >   
+    <div class="row align-items-start">
+      <div class="  mb-3 col">
+        <span class=" -text info">Estado Civil</span>
+        <div class="form-control">
+          <span id="coop_ec" name="coop_ec" class="badge bg-info">---</span>
+        </div>
+      </div>
+      <div class="  mb-3 col">
+        <span class=" -text info">Telefono</span>
+        <input disabled class="form-control" type="text" id="coop_Telefono" name="coop_Telefono">
+      </div>
+      <div class="  mb-3 col">
+        <span class=" -text info">E-Mail</span>
+        <input disabled class="form-control" type="text" id="coop_email" name="coop_email">
+      </div>
     </div>
-    <div class="  mb-3 col">
-      <span class=" -text info">E-Mail</span>
-      <input disabled class="form-control" type="text" id="coop_email" name="coop_email" >   
-    </div>
+
+
+    <!--     </form> -->
   </div>
 
-     
-<!--     </form> -->
+  <div class="container-lg">
+    <h4>Subida de Documentos</h4>
   </div>
-
-    <div class="container-lg"><h4>Subida de Documentos</h4></div>
-    <input  type="" id="temp_identidad" name="temp_identidad" hidden >
-    <input  type="" id="temp_nombre" name="temp_nombre" hidden   >
-  <div class="container-lg" >
-    <form class="" action="" id="formulario" method="" enctype="multipart/form-data">    
-      <div class="input-group mb-3">       
+  <input type="" id="temp_identidad" name="temp_identidad" hidden>
+  <input type="" id="temp_nombre" name="temp_nombre" hidden>
+  <div class="container-lg">
+    <form class="" action="" id="formulario" method="" enctype="multipart/form-data">
+      <div class="input-group mb-3">
 
         <input class="form-control" type="file" id="archivo" name="archivo" accept="application/pdf">
-        <button hidden onclick="crearYSubir()" id="btn_subir" class="btn btn-secondary" type="" disabled="true">Subir archivo</button>
+        <button hidden onclick="crearYSubir()" id="btn_subir" class="btn btn-secondary" type="" disabled="true">Subir
+          archivo</button>
 
         <button onclick="crearYSubir()" id="btnSubir" class="btn btn-primary" type="button">
           <span class="spinner-border spinner-border-sm d-none" id="spinner" aria-hidden="true"></span>
           <span id="textoBtn">Subir archivo</span>
-        </button>      
+        </button>
       </div>
       <div class="input-group mb-3">
         <select id="Stipo" name="Stipo" class="form-select" aria-label="Default select example">
-          <option selected>Seleccione un tipo de documento</option>
-          <option value="1">Identidad</option>
-          <option value="2">Pasaporte</option>
-          <option value="3">Contratos</option>
-          <option value="4">Escrituras</option>
-          <option value="5">Croquis</option>
-          <option value="6">Otros ducumentos</option>
+          <option selected>Seleccione un tipo de documento</option>         
         </select>
       </div>
     </form>
   </div>
-    
-<div class="container">
- <div class="py-2">
-  <button  class="btn btn-primary " onclick="carga_archivos()" type="submit">Enlistar Archivos</button>
- </div>
-  <div class="table-responsive" hidden>
-    <table id="tbl_archivos" name="tbl_archivos" class="table table-sm  table-hover table-active text-secondary-emphasis table-bordered border-primary">
-      <thead class="table-info" >
-        <tr>
-          <th scope="col">Nombre del archivo</th>
-          <th scope="col">Peso</th>
-          <th scope="col">Fecha</th>
-          <th scope="col">Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-    
-      
-      </tbody>
-    </table>
-  </div>
+
+  <div class="container">
+    <div class="py-2">
+      <button class="btn btn-primary " onclick="carga_archivos()" type="submit"><span class="ri-file-list-2-fill"></span>Enlistar Archivos</button>
+    </div>
+ 
+
+
+    <div class="accordion" id="acordion_archivos" class="pb-2">
   
 
-  <div class="accordion" id="acordion_archivos">
-    <div class="accordion-item">
-      <h2 class="accordion-header">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-          Accordion Item #1
-        </button>
-      </h2>
-      <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
-        <div class="accordion-body">
-          
-        </div>
-      </div>
     </div>
-  </div>
 
 
 
   </div>
-</div>
+  </div>
 
-
+  <script src="tipos_doc.js"></script>
   <script src="manejo_datos.js"></script>
   <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded',()=>{
+    document.addEventListener('DOMContentLoaded', () => {
       load_data(1);
     })
   </script>
-   
+
 </body>
+
 </html>
+
+
+
+
+                  
