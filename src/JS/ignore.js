@@ -120,3 +120,41 @@ app.post('/subir_archivo', (req, res) => {
         res.json({ mensaje: 'Archivo cargado con éxito 😉' });
     });
 });
+
+
+
+
+
+
+
+//////////////////////////////////////debounce
+
+ function debounce(func, delay) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
+
+(function() {
+    const input = document.getElementById("searchInput");
+
+    input.addEventListener("input", (function() {
+      let timeout;
+
+      return function() {
+        clearTimeout(timeout);
+
+        timeout = setTimeout(() => {
+          const filtro = input.value.toLowerCase();
+          const filas = document.querySelectorAll("#miTabla tbody tr");
+
+          filas.forEach(fila => {
+            const textoFila = fila.textContent.toLowerCase();
+            fila.style.display = textoFila.includes(filtro) ? "" : "none";
+          });
+        }, 300);
+      };
+    })());
+  })();

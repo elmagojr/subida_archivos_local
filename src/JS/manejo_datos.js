@@ -59,7 +59,28 @@ function mostrarCargando(mostrar) {
     }
   
   }
- 
+  
+  
+ function debounce(func, delay) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
+
+
+
+document.getElementById("txt_busqueda").addEventListener("input", debounce(function () {
+    const filtro = document.getElementById("txt_busqueda").value.toLowerCase();
+    const filas = document.querySelectorAll("#tbl_afiliado tbody tr");
+
+    filas.forEach(fila => {
+        const textoFila = fila.textContent.toLowerCase();
+        fila.style.display = textoFila.includes(filtro) ? "" : "none";
+    });
+}, 500));
+
 async function TraeTodosLosAfiliados() {   
     mostrarCargando(true);
     const tabla_afiliados = document.getElementById('tbl_afiliado').querySelector('tbody');
@@ -77,9 +98,8 @@ async function TraeTodosLosAfiliados() {
     tabla_afiliados.innerHTML = datos.length ? datos.map(D=>`
                 <tr>
                     <td>
-                        <a target="_blank" class="btn btn-primary btn-sm" href="/?id=${D.coop_codigo} " role=""><i class="ri-check-line"></i></a>
-                    </td>
-                 
+                        <a target="" class="btn btn-primary btn-sm" href="/?id=${D.coop_codigo} " role=""><i class="ri-arrow-right-long-fill"></i></a>
+                    </td>                 
                     <td>${D.coop_codigo}</td>
                     <td>${D.coop_identidad}</td>
                     <td>${D.coop_nombre}</td>

@@ -11,11 +11,15 @@ pm2 startup --------------al iniciarl el sistema (no lo e probado) se debe ejecu
 
 
 en omnis
+Calculate %CUENTA as 7
 Calculate %%HOST as 'localhost'
-Calculate %%PUERTO as 4040
-Calculate %%DIRECCION as con('http://',%%HOST,':',%%PUERTO)
-Launch program (Do not quit OMNIS) {"C:\SISC\gg.bat",[%%DIRECCION]}     ;; lanzar addon WEB
+Calculate %%PUERTO as 3000
+Calculate %%DIRECCION as con('http://',%%HOST,':',%%PUERTO,'/?id=',%CUENTA)
+Launch program (Do not quit OMNIS) {"C:\SISC\EXE.bat" "[%%DIRECCION]"}     ;; lanzar addon WEB
 
 
 para levantar app por tunnel
 ngrok http --url=toucan-powerful-incredibly.ngrok-free.app 3000
+
+
+ start msedge --new-window --disable-prompt-on-repost --app="http://localhost:3000/?id=8"

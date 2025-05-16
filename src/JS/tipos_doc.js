@@ -4,8 +4,7 @@ const Tipos_Documentos = [
     {codigo:3, descripcion: 'Contratos'},
     {codigo:4, descripcion: 'Escrituras'},
     {codigo:5, descripcion: 'Croquis'},
-    {codigo:6, descripcion: 'Otros documentos'}  
-    
+    {codigo:6, descripcion: 'Otros documentos'}      
 ]
 
  function Obtener_tipoArchivo(tipo) {   

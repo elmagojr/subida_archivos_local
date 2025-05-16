@@ -22,6 +22,7 @@ function formatBytes(bytes) {
 
 console.log('path:  ' + path.resolve('js'));
 app.use(express.static(path.resolve('JS')));
+app.use(express.static(path.resolve('img')));
 
 app.get('/test-connection', async (req, res) => {
     try {
@@ -58,7 +59,7 @@ app.get('/api/allcoop', async (req, res) => {
     
     try {
         const connection = await ODBC.connect(connectionString);
-        const result = await connection.query(`SELECT coop_codigo,coop_identidad,coop_nombre,coop_rtn,coop_codigo_ant FROM "DBA"."COOPERATIVISTAS" where "COOP_COMPANIA" = (select usu_compania from dba."Usuarios" where usu_codigo = current user)`);
+        const result = await connection.query(`SELECT coop_codigo,coop_identidad,coop_nombre,coop_rtn,coop_codigo_ant FROM "DBA"."COOPERATIVISTAS" where "COOP_COMPANIA" = (select usu_compania from dba."Usuarios" where usu_codigo = current user) order by coop_codigo asc`);
         await connection.close();
         res.json(result);
     } catch (error) {
